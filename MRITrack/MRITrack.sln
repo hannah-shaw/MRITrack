@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MRITrack", "MRITrack\MRITrack.csproj", "{F64026A5-5099-4694-85E2-7AA285663409}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MRITrack", "MRITrack\MRITrack.csproj", "{A3DF2A27-478C-42D8-B457-45F1D2E6EF76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F64026A5-5099-4694-85E2-7AA285663409}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F64026A5-5099-4694-85E2-7AA285663409}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F64026A5-5099-4694-85E2-7AA285663409}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F64026A5-5099-4694-85E2-7AA285663409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3DF2A27-478C-42D8-B457-45F1D2E6EF76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3DF2A27-478C-42D8-B457-45F1D2E6EF76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3DF2A27-478C-42D8-B457-45F1D2E6EF76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3DF2A27-478C-42D8-B457-45F1D2E6EF76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {20084595-8819-4B1B-B97E-EB024C806456}
+		SolutionGuid = {C8866D67-2422-4379-876F-72D0DC6D4FE4}
 	EndGlobalSection
 EndGlobal
