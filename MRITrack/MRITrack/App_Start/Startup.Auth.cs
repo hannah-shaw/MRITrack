@@ -58,11 +58,11 @@ namespace MRITrack
             //   appId: "",
             //   appSecret: "");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "588891486793-dltqdh04r661a6qkdkveijurgqm0r1jv.apps.googleusercontent.com",
+                ClientSecret = "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"
+            });
         }
     }
 }
