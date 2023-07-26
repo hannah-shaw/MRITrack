@@ -52,5 +52,12 @@
                 }),
                 'top-left'
             );
+            // Get the user's current position and set the map's center to that location
+            navigator.geolocation.getCurrentPosition(position => {
+                const { latitude, longitude } = position.coords;
+                map.setCenter([longitude, latitude]);
+            }, error => {
+                console.error(error);
+            });
         </script>
 </main>
