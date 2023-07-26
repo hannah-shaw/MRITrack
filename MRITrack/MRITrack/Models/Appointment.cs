@@ -18,7 +18,6 @@ namespace MRITrack.Models
 
         public DateTime Date { get; set; }
 
-        [Required]
         public string Time { get; set; }
 
         public int UserId { get; set; }

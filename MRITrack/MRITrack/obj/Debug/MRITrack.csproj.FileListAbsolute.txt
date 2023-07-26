@@ -214,3 +214,7 @@ D:\github_resource\MRITrack\MRITrack\MRITrack\obj\Debug\MRITrack.csproj.CoreComp
 D:\github_resource\MRITrack\MRITrack\MRITrack\obj\Debug\MRITrack.csproj.CopyComplete
 D:\github_resource\MRITrack\MRITrack\MRITrack\obj\Debug\MRITrack.dll
 D:\github_resource\MRITrack\MRITrack\MRITrack\obj\Debug\MRITrack.pdb
+D:\github_resource\MRITrack\MRITrack\MRITrack\bin\SendGrid.dll
+D:\github_resource\MRITrack\MRITrack\MRITrack\bin\StarkbankEcdsa.dll
+D:\github_resource\MRITrack\MRITrack\MRITrack\bin\SendGrid.pdb
+D:\github_resource\MRITrack\MRITrack\MRITrack\bin\SendGrid.xml

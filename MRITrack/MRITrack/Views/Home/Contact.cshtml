@@ -1,19 +1,56 @@
 ﻿@{
     ViewBag.Title = "Contact";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
 
-    <address>
-        One Microsoft Way<br />
-        Redmond, WA 98052-6399<br />
-        <abbr title="Phone">P:</abbr>
-        425.555.0100
-    </address>
+        #map {
+            position: absolute;
+            top: 80px;
+            bottom: 60px;
+            width: 60%;
+        }
 
-    <address>
-        <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-        <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-    </address>
+        #title {
+            font-size: 36px;
+            margin-top: 20px;
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<main>
+        <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css" type="text/css">
+        <h1 id="title">@ViewBag.Title</h1>
+        <div id="map"></div>
+
+
+
+        <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+        <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+        <script>
+            mapboxgl.accessToken = 'pk.eyJ1IjoiaGFueGlhbzExMDciLCJhIjoiY2xram8ycXZmMHA2bjNkbWp5dzUyenI3YSJ9.kReTMu9bL2zJk_lTtiFDdg';
+            const map = new mapboxgl.Map({
+                container: 'map',
+                // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: [120.58319, 31.29834],
+                zoom: 13
+            });
+
+            map.addControl(
+                new MapboxDirections({
+                    accessToken: mapboxgl.accessToken
+                }),
+                'top-left'
+            );
+        </script>
 </main>

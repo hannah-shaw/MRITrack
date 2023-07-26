@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 using MRITrack.Models;
@@ -53,6 +54,7 @@ namespace MRITrack.Controllers
         {
             if (ModelState.IsValid)
             {
+                appointment.Date = DateTime.Now;
                 db.Appointments.Add(appointment);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -96,6 +98,64 @@ namespace MRITrack.Controllers
             ViewBag.DoctorId = new SelectList(db.Doctors, "Id", "FirstName", appointment.DoctorId);
             ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", appointment.UserId);
             return View(appointment);
+        }
+
+        [HttpPost]
+        public String CreateAppointment()
+        {
+            var appointment = new Appointment
+            {
+                UserId = int.Parse(Request.Form["PatientID"]),
+                DoctorId = int.Parse(Request.Form["DoctorID"]),
+                Date = DateTime.Now,
+                Time = Request.Form["AppointmentDate"]
+            };
+
+            var vx = Request.Files["Attachment"].ContentLength;
+
+            // Store the attachment in local storage.
+            var Str1 = Request.Files[0].FileName.Split('.');
+            var FileType = Str1[Str1.Length - 1];
+            var FilePath =
+                Server.MapPath("~/Uploads/") +
+                string.Format(@"{0}", Guid.NewGuid()) +
+                "." + FileType;
+            Request.Files[0].SaveAs(FilePath);
+
+            if (ModelState.IsValid)
+            {
+                // Add the appointment into the database.
+                db.Appointments.Add(appointment);
+                db.SaveChanges();
+
+                // Send confirmation email.
+                var mail = new MailMessage();
+                mail.To.Add(new MailAddress(Request.Form["EmailAddress"]));
+                mail.From = new MailAddress("Monash-fit5032-2023-T3@outlook.com");
+
+                mail.Subject = "Appointment Conformation";
+                mail.Body =
+                    "You made an appointment:\n" +
+                    "User ID: " + Request.Form["PatientID"] + "\n" +
+                    "Doctor ID: " + Request.Form["DoctorID"] + "\n" +
+                    "Date: " + Request.Form["AppointmentDate"];
+                mail.IsBodyHtml = false;
+
+                var attachment = new System.Net.Mail.Attachment(FilePath);
+                mail.Attachments.Add(attachment);
+
+                var smtp = new SmtpClient();
+                smtp.Host = "smtp.office365.com";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+                smtp.Credentials = new System.Net.NetworkCredential
+                    ("Monash-fit5032-2023-T3@outlook.com", "Monash2023#");
+
+                smtp.Send(mail);
+                return "Success";
+            }
+
+            return "Database Unavailable.";
         }
 
         // GET: Appointments/Delete/5
