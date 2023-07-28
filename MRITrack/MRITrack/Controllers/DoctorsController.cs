@@ -6,10 +6,12 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using MRITrack.Models;
 
 namespace MRITrack.Controllers
 {
+    
     public class DoctorsController : Controller
     {
         private Model1 db = new Model1();
@@ -27,15 +29,16 @@ namespace MRITrack.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Doctor doctor = db.Doctors.Find(id);
-            if (doctor == null)
+            Doctors doctors = db.Doctors.Find(id);
+            if (doctors == null)
             {
                 return HttpNotFound();
             }
-            return View(doctor);
+            return View(doctors);
         }
 
         // GET: Doctors/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -46,31 +49,36 @@ namespace MRITrack.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,FirstName,LastName")] Doctor doctor)
+        [Authorize(Roles = "Admin")]
+        public ActionResult Create([Bind(Include = "Id,FirstName,LastName")] Doctors doctors)
         {
+            doctors.UserId = User.Identity.GetUserId();
+            ModelState.Clear();
+            TryValidateModel(doctors);
             if (ModelState.IsValid)
             {
-                db.Doctors.Add(doctor);
+                db.Doctors.Add(doctors);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(doctor);
+            return View(doctors);
         }
 
         // GET: Doctors/Edit/5
+        [Authorize(Roles = "Doctor,Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Doctor doctor = db.Doctors.Find(id);
-            if (doctor == null)
+            Doctors doctors = db.Doctors.Find(id);
+            if (doctors == null)
             {
                 return HttpNotFound();
             }
-            return View(doctor);
+            return View(doctors);
         }
 
         // POST: Doctors/Edit/5
@@ -78,39 +86,42 @@ namespace MRITrack.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName")] Doctor doctor)
+        [Authorize(Roles = "Doctor,Admin")]
+        public ActionResult Edit([Bind(Include = "Id,FirstName,LastName,UserId")] Doctors doctors)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(doctor).State = EntityState.Modified;
+                db.Entry(doctors).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(doctor);
+            return View(doctors);
         }
 
         // GET: Doctors/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Doctor doctor = db.Doctors.Find(id);
-            if (doctor == null)
+            Doctors doctors = db.Doctors.Find(id);
+            if (doctors == null)
             {
                 return HttpNotFound();
             }
-            return View(doctor);
+            return View(doctors);
         }
 
         // POST: Doctors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Doctor doctor = db.Doctors.Find(id);
-            db.Doctors.Remove(doctor);
+            Doctors doctors = db.Doctors.Find(id);
+            db.Doctors.Remove(doctors);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

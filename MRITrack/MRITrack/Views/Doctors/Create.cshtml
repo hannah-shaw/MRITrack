@@ -1,4 +1,4 @@
-﻿@model MRITrack.Models.Doctor
+﻿@model MRITrack.Models.Doctors
 
 @{
     ViewBag.Title = "Create";
@@ -13,7 +13,7 @@
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>Doctor</h4>
+        <h4>Doctors</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">

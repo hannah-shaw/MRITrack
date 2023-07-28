@@ -190,21 +190,17 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\Appointment.cs" />
-    <Compile Include="Models\Comment.cs" />
-    <Compile Include="Models\Doctor.cs" />
+    <Compile Include="Models\Appointments.cs" />
+    <Compile Include="Models\Comments.cs" />
+    <Compile Include="Models\Doctors.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Model1.cs" />
-    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\Users.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\aspnet-MRITrack-20230719101810.mdf" />
-    <Content Include="App_Data\aspnet-MRITrack-20230719101810_log.ldf">
-      <DependentUpon>aspnet-MRITrack-20230719101810.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -297,6 +293,7 @@
     <Content Include="Views\Users\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
     <Folder Include="Uploads\" />
     <Folder Include="Utils\" />
   </ItemGroup>

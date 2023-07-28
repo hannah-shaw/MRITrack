@@ -7,18 +7,23 @@ using System.Net;
 using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using MRITrack.Models;
 
 namespace MRITrack.Controllers
 {
+    [Authorize]
     public class AppointmentsController : Controller
     {
         private Model1 db = new Model1();
+        private ApplicationDbContext identityDB = new ApplicationDbContext();
 
         // GET: Appointments
+        [AllowAnonymous]
         public ActionResult Index()
         {
-            var appointments = db.Appointments.Include(a => a.Doctor).Include(a => a.User);
+            var appointments = db.Appointments.Include(a => a.Doctors).Include(a => a.Users);
             return View(appointments.ToList());
         }
 
@@ -29,12 +34,12 @@ namespace MRITrack.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Appointment appointment = db.Appointments.Find(id);
-            if (appointment == null)
+            Appointments appointments = db.Appointments.Find(id);
+            if (appointments == null)
             {
                 return HttpNotFound();
             }
-            return View(appointment);
+            return View(appointments);
         }
 
         // GET: Appointments/Create
@@ -50,19 +55,18 @@ namespace MRITrack.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Date,Time,UserId,DoctorId")] Appointment appointment)
+        public ActionResult Create([Bind(Include = "Id,Date,Time,UserId,DoctorId")] Appointments appointments)
         {
             if (ModelState.IsValid)
             {
-                appointment.Date = DateTime.Now;
-                db.Appointments.Add(appointment);
+                db.Appointments.Add(appointments);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.DoctorId = new SelectList(db.Doctors, "Id", "FirstName", appointment.DoctorId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", appointment.UserId);
-            return View(appointment);
+            ViewBag.DoctorId = new SelectList(db.Doctors, "Id", "FirstName", appointments.DoctorId);
+            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", appointments.UserId);
+            return View(appointments);
         }
 
         // GET: Appointments/Edit/5
@@ -72,14 +76,14 @@ namespace MRITrack.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Appointment appointment = db.Appointments.Find(id);
-            if (appointment == null)
+            Appointments appointments = db.Appointments.Find(id);
+            if (appointments == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.DoctorId = new SelectList(db.Doctors, "Id", "FirstName", appointment.DoctorId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", appointment.UserId);
-            return View(appointment);
+            ViewBag.DoctorId = new SelectList(db.Doctors, "Id", "FirstName", appointments.DoctorId);
+            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", appointments.UserId);
+            return View(appointments);
         }
 
         // POST: Appointments/Edit/5
@@ -87,32 +91,55 @@ namespace MRITrack.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Date,Time,UserId,DoctorId")] Appointment appointment)
+        public ActionResult Edit([Bind(Include = "Id,Date,Time,UserId,DoctorId")] Appointments appointments)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(appointment).State = EntityState.Modified;
+                db.Entry(appointments).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.DoctorId = new SelectList(db.Doctors, "Id", "FirstName", appointment.DoctorId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", appointment.UserId);
-            return View(appointment);
+            ViewBag.DoctorId = new SelectList(db.Doctors, "Id", "FirstName", appointments.DoctorId);
+            ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", appointments.UserId);
+            return View(appointments);
         }
 
         [HttpPost]
         public String CreateAppointment()
         {
-            var appointment = new Appointment
+            var userId = User.Identity.GetUserId();
+            var userQuery = db.Users.Where(u => u.UserId == userId);
+            var user = userQuery.FirstOrDefault();
+
+            var userManager = HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            var roles = userManager.GetRoles(userId).FirstOrDefault();
+
+            var appointment = new Appointments();
+            if(roles == "Patient") {
+                appointment = new Appointments
+                {
+                    UserId = user.Id,
+                    DoctorId = int.Parse(Request.Form["DoctorID"]),
+                    Date = DateTime.Now,
+                    Time = Request.Form["AppointmentDate"]
+                };
+            }
+            else
             {
-                UserId = int.Parse(Request.Form["PatientID"]),
-                DoctorId = int.Parse(Request.Form["DoctorID"]),
-                Date = DateTime.Now,
-                Time = Request.Form["AppointmentDate"]
-            };
+                appointment = new Appointments
+                {
+                    UserId = int.Parse(Request.Form["PatientID"]),
+                    DoctorId = int.Parse(Request.Form["DoctorID"]),
+                    Date = DateTime.Now,
+                    Time = Request.Form["AppointmentDate"]
+                };
+            }
 
+
+           
+            /*
             var vx = Request.Files["Attachment"].ContentLength;
-
+            
             // Store the attachment in local storage.
             var Str1 = Request.Files[0].FileName.Split('.');
             var FileType = Str1[Str1.Length - 1];
@@ -121,13 +148,21 @@ namespace MRITrack.Controllers
                 string.Format(@"{0}", Guid.NewGuid()) +
                 "." + FileType;
             Request.Files[0].SaveAs(FilePath);
+            */
+            var doctor = db.Appointments.Where(s => s.DoctorId == appointment.DoctorId).ToList();
+            var dates = db.Appointments.Where(s => s.Time == appointment.Time).ToList();
+            if (doctor.Intersect(dates).Any())
+            {
+                return "appointment conflict!";
+            }
 
             if (ModelState.IsValid)
             {
                 // Add the appointment into the database.
                 db.Appointments.Add(appointment);
                 db.SaveChanges();
-
+                return "Success";
+                /*
                 // Send confirmation email.
                 var mail = new MailMessage();
                 mail.To.Add(new MailAddress(Request.Form["EmailAddress"]));
@@ -153,10 +188,12 @@ namespace MRITrack.Controllers
 
                 smtp.Send(mail);
                 return "Success";
+                */
             }
 
             return "Database Unavailable.";
         }
+
 
         // GET: Appointments/Delete/5
         public ActionResult Delete(int? id)
@@ -165,12 +202,12 @@ namespace MRITrack.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Appointment appointment = db.Appointments.Find(id);
-            if (appointment == null)
+            Appointments appointments = db.Appointments.Find(id);
+            if (appointments == null)
             {
                 return HttpNotFound();
             }
-            return View(appointment);
+            return View(appointments);
         }
 
         // POST: Appointments/Delete/5
@@ -178,8 +215,8 @@ namespace MRITrack.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Appointment appointment = db.Appointments.Find(id);
-            db.Appointments.Remove(appointment);
+            Appointments appointments = db.Appointments.Find(id);
+            db.Appointments.Remove(appointments);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

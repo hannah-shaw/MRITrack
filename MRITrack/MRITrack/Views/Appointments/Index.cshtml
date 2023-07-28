@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MRITrack.Models.Appointment>
+﻿@model IEnumerable<MRITrack.Models.Appointments>
 
 @{
     ViewBag.Title = "Index";
@@ -13,16 +13,16 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Doctor.FirstName)
+            Doctor Name
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.User.FirstName)
+            Patient Name
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Date)
+            Time of booking
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Time)
+            Appointment time
         </th>
         <th></th>
     </tr>
@@ -30,10 +30,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Doctor.FirstName)
+            @Html.DisplayFor(modelItem => item.Doctors.FirstName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.User.FirstName)
+            @Html.DisplayFor(modelItem => item.Users.FirstName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Date)

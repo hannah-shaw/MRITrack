@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using MRITrack.Models;
 
 namespace MRITrack.Controllers
@@ -17,7 +18,7 @@ namespace MRITrack.Controllers
         // GET: Comments
         public ActionResult Index()
         {
-            var comments = db.Comments.Include(c => c.Appointment);
+            var comments = db.Comments.Include(c => c.Appointments);
             return View(comments.ToList());
         }
 
@@ -28,18 +29,22 @@ namespace MRITrack.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Comment comment = db.Comments.Find(id);
-            if (comment == null)
+            Comments comments = db.Comments.Find(id);
+            if (comments == null)
             {
                 return HttpNotFound();
             }
-            return View(comment);
+            return View(comments);
         }
 
         // GET: Comments/Create
+        [Authorize(Roles = "Patient,Admin")]
         public ActionResult Create()
         {
-            ViewBag.AppointmentId = new SelectList(db.Appointments, "Id", "Time");
+            var userId = User.Identity.GetUserId();
+            var loggedInUser = db.Users.FirstOrDefault(u => u.UserId == userId);
+            var loggedInUserAppointmentList = db.Appointments.Where(u => u.UserId == loggedInUser.Id).ToList();
+            ViewBag.AppointmentId = new SelectList(loggedInUserAppointmentList, "Id", "DoctorId");
             return View();
         }
 
@@ -48,33 +53,50 @@ namespace MRITrack.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Star,AppointmentId,DoctorId")] Comment comment)
+        [Authorize(Roles = "Patient,Admin")]
+        public ActionResult Create([Bind(Include = "Id,Star,AppointmentId")] Comments comments)
         {
-            if (ModelState.IsValid)
+            var userId = User.Identity.GetUserId();
+            var loggedInUser = db.Users.FirstOrDefault(u => u.UserId == userId);
+            var loggedInUserAppointmentList = db.Appointments.Where(u => u.UserId == loggedInUser.Id).ToList();
+            var commentIds = new List<int>();
+
+            foreach (var appointment in loggedInUserAppointmentList)
             {
-                db.Comments.Add(comment);
+                var comment = db.Comments.FirstOrDefault(u => u.AppointmentId == appointment.Id);
+
+                if (comment != null)
+                {
+                    commentIds.Add(comment.Id);
+                }
+            }
+
+            if (ModelState.IsValid && loggedInUserAppointmentList.Any(a => a.Id == comments.AppointmentId))
+            {
+                db.Comments.Add(comments);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.AppointmentId = new SelectList(db.Appointments, "Id", "Time", comment.AppointmentId);
-            return View(comment);
+            ViewBag.AppointmentId = new SelectList(loggedInUserAppointmentList, "Id", "DoctorId", comments.AppointmentId);
+            return View(comments);
         }
 
         // GET: Comments/Edit/5
+        [Authorize(Roles = "Patient,Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Comment comment = db.Comments.Find(id);
-            if (comment == null)
+            Comments comments = db.Comments.Find(id);
+            if (comments == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.AppointmentId = new SelectList(db.Appointments, "Id", "Time", comment.AppointmentId);
-            return View(comment);
+            ViewBag.AppointmentId = new SelectList(db.Appointments, "Id", "Time", comments.AppointmentId);
+            return View(comments);
         }
 
         // POST: Comments/Edit/5
@@ -82,40 +104,43 @@ namespace MRITrack.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Star,AppointmentId,DoctorId")] Comment comment)
+        [Authorize(Roles = "Patient,Admin")]
+        public ActionResult Edit([Bind(Include = "Id,Star,AppointmentId")] Comments comments)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(comment).State = EntityState.Modified;
+                db.Entry(comments).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.AppointmentId = new SelectList(db.Appointments, "Id", "Time", comment.AppointmentId);
-            return View(comment);
+            ViewBag.AppointmentId = new SelectList(db.Appointments, "Id", "Time", comments.AppointmentId);
+            return View(comments);
         }
 
         // GET: Comments/Delete/5
+        [Authorize(Roles = "Patient,Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Comment comment = db.Comments.Find(id);
-            if (comment == null)
+            Comments comments = db.Comments.Find(id);
+            if (comments == null)
             {
                 return HttpNotFound();
             }
-            return View(comment);
+            return View(comments);
         }
 
         // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Patient,Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
-            Comment comment = db.Comments.Find(id);
-            db.Comments.Remove(comment);
+            Comments comments = db.Comments.Find(id);
+            db.Comments.Remove(comments);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

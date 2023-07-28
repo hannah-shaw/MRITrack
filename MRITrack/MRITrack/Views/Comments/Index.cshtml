@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MRITrack.Models.Comment>
+﻿@model IEnumerable<MRITrack.Models.Comments>
 
 @{
     ViewBag.Title = "Index";
@@ -13,13 +13,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Appointment.Time)
+            @Html.DisplayNameFor(model => model.Appointments.DoctorId)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Star)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DoctorId)
         </th>
         <th></th>
     </tr>
@@ -27,13 +24,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Appointment.Time)
+            @Html.DisplayFor(modelItem => item.Appointments.DoctorId)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Star)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DoctorId)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

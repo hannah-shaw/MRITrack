@@ -6,23 +6,30 @@ namespace MRITrack.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Doctor
+    public partial class Appointments
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Doctor()
+        public Appointments()
         {
-            Appointments = new HashSet<Appointment>();
+            Comments = new HashSet<Comments>();
         }
 
         public int Id { get; set; }
 
-        [Required]
-        public string FirstName { get; set; }
+        public DateTime Date { get; set; }
 
         [Required]
-        public string LastName { get; set; }
+        public string Time { get; set; }
+
+        public int UserId { get; set; }
+
+        public int DoctorId { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<Comments> Comments { get; set; }
+
+        public virtual Doctors Doctors { get; set; }
+
+        public virtual Users Users { get; set; }
     }
 }

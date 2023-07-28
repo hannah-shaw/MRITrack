@@ -12,26 +12,29 @@ namespace MRITrack.Models
         {
         }
 
-        public virtual DbSet<Appointment> Appointments { get; set; }
-        public virtual DbSet<Comment> Comments { get; set; }
-        public virtual DbSet<Doctor> Doctors { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Appointments> Appointments { get; set; }
+        public virtual DbSet<Comments> Comments { get; set; }
+        public virtual DbSet<Doctors> Doctors { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Appointment>()
+            modelBuilder.Entity<Appointments>()
                 .HasMany(e => e.Comments)
-                .WithRequired(e => e.Appointment)
+                .WithRequired(e => e.Appointments)
+                .HasForeignKey(e => e.AppointmentId)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<Doctor>()
+            modelBuilder.Entity<Doctors>()
                 .HasMany(e => e.Appointments)
-                .WithRequired(e => e.Doctor)
+                .WithRequired(e => e.Doctors)
+                .HasForeignKey(e => e.DoctorId)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<User>()
+            modelBuilder.Entity<Users>()
                 .HasMany(e => e.Appointments)
-                .WithRequired(e => e.User)
+                .WithRequired(e => e.Users)
+                .HasForeignKey(e => e.UserId)
                 .WillCascadeOnDelete(false);
         }
     }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MRITrack.Models.Doctor>
+﻿@model IEnumerable<MRITrack.Models.Doctors>
 
 @{
     ViewBag.Title = "Index";
@@ -18,7 +18,6 @@
         <th>
             @Html.DisplayNameFor(model => model.LastName)
         </th>
-        <th></th>
     </tr>
 
 @foreach (var item in Model) {

@@ -6,7 +6,7 @@ namespace MRITrack.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Comment
+    public partial class Comments
     {
         public int Id { get; set; }
 
@@ -14,9 +14,6 @@ namespace MRITrack.Models
 
         public int AppointmentId { get; set; }
 
-        [Required]
-        public string DoctorId { get; set; }
-
-        public virtual Appointment Appointment { get; set; }
+        public virtual Appointments Appointments { get; set; }
     }
 }

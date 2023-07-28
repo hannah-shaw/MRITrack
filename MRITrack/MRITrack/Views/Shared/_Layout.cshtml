@@ -21,7 +21,13 @@
                     <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Doctors", "Index", "Doctors", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Appointments", "Index", "Appointments", new { area = "" }, new { @class = "nav-link" })</li>
+                    @if (User.IsInRole("Patient") | User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("Users", "Index", "Users", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Comments", "Index", "Comments", new { area = "" }, new { @class = "nav-link" })</li>
+                    }
                 </ul>
                  @Html.Partial("_LoginPartial")
             </div>
