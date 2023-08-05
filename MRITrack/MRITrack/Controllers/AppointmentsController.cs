@@ -10,6 +10,10 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using MRITrack.Models;
+using CsvHelper;
+using System.IO;
+using CsvHelper.Configuration;
+using System.Globalization;
 
 namespace MRITrack.Controllers
 {
@@ -229,5 +233,60 @@ namespace MRITrack.Controllers
             }
             base.Dispose(disposing);
         }
+        // Appointments/GetDoctorAppointmentsCount
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult GetDoctorAppointmentsCount()
+        {
+               var doctorAppointments = db.Appointments
+                    .GroupBy(a => a.DoctorId)
+                    .Select(g => new
+                    {
+                        Doctor = db.Doctors.FirstOrDefault(d => d.Id == g.FirstOrDefault().DoctorId).FirstName,
+                        Times = g.Count()
+                    })
+                    .ToList();
+
+            return Json(doctorAppointments, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [AllowAnonymous]
+        public ActionResult ExportAppointments()
+        {
+            var appointments = db.Appointments.ToList();
+
+            using (var memoryStream = new MemoryStream())
+            using (var streamWriter = new StreamWriter(memoryStream))
+            using (var csvWriter = new CsvWriter(streamWriter, new CsvConfiguration(CultureInfo.InvariantCulture)))
+            {
+                csvWriter.WriteField("Id");
+                csvWriter.WriteField("Date");
+                csvWriter.WriteField("Time");
+                csvWriter.WriteField("DoctorName");
+                csvWriter.WriteField("UserName");
+                csvWriter.NextRecord();
+
+                foreach (var appointment in appointments)
+                {
+                    csvWriter.WriteField(appointment.Id);
+                    csvWriter.WriteField(appointment.Date);
+                    csvWriter.WriteField(appointment.Time);
+                    csvWriter.WriteField(db.Doctors.FirstOrDefault(d => d.Id == appointment.DoctorId).FirstName);
+                    csvWriter.WriteField(db.Users.FirstOrDefault(d => d.Id == appointment.UserId).FirstName);
+                    csvWriter.NextRecord();
+                }
+
+                streamWriter.Flush();
+                memoryStream.Position = 0;
+                memoryStream.CopyTo(Response.OutputStream);
+            }
+
+            Response.ContentType = "text/csv";
+            Response.AddHeader("Content-Disposition", "attachment; filename=appointments.csv");
+
+            return new EmptyResult();
+        }
+
     }
 }

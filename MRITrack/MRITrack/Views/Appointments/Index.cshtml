@@ -27,26 +27,67 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Doctors.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Users.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Time)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Doctors.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Users.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
 
 </table>
+<a href="@Url.Action("ExportAppointments", "Appointments")" class="btn btn-primary">Export Appointments</a>
+
+
+<div id="chartContainer" style="height: 400px; width: 60%;"></div>
+<button id="exportButton1" class="btn btn-primary">Export Chart to PNG</button>
+
+<script type="text/javascript">
+    window.onload = function () {
+        fetch('Appointments/GetDoctorAppointmentsCount')
+            .then(response => response.json())
+            .then(doctorAppointments => {
+                var dataPoints = doctorAppointments.map(appointment => {
+                    return {
+                        label: appointment.Doctor.toString(),
+                        y: appointment.Times
+                    };
+                });
+
+                var chart = new CanvasJS.Chart("chartContainer", {
+                    title: {
+                        text: "Appointment Count"
+                    },
+                    data: [
+                        {
+                            type: "column",
+                            dataPoints: dataPoints
+                        }
+                    ]
+                });
+
+
+                document.getElementById("exportButton1").addEventListener("click", function () {
+                    chart.exportChart({ format: "png" });
+                });
+
+                chart.render();
+            });
+    }
+
+</script>
