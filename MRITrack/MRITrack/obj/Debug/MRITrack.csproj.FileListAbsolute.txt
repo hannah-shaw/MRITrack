@@ -234,3 +234,7 @@ D:\github_resource\MRITrack\MRITrack\MRITrack\bin\System.Memory.xml
 D:\github_resource\MRITrack\MRITrack\MRITrack\bin\System.Numerics.Vectors.xml
 D:\github_resource\MRITrack\MRITrack\MRITrack\bin\System.Runtime.CompilerServices.Unsafe.xml
 D:\github_resource\MRITrack\MRITrack\MRITrack\bin\System.Threading.Tasks.Extensions.xml
+D:\github_resource\MRITrack\MRITrack\MRITrack\bin\PagedList.dll
+D:\github_resource\MRITrack\MRITrack\MRITrack\bin\PagedList.Mvc.dll
+D:\github_resource\MRITrack\MRITrack\MRITrack\bin\PagedList.xml
+D:\github_resource\MRITrack\MRITrack\MRITrack\bin\PagedList.Mvc.xml

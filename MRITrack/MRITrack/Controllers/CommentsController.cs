@@ -83,7 +83,7 @@ namespace MRITrack.Controllers
         }
 
         // GET: Comments/Edit/5
-        [Authorize(Roles = "Patient,Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -104,7 +104,7 @@ namespace MRITrack.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Patient,Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit([Bind(Include = "Id,Star,AppointmentId")] Comments comments)
         {
             if (ModelState.IsValid)
@@ -118,7 +118,7 @@ namespace MRITrack.Controllers
         }
 
         // GET: Comments/Delete/5
-        [Authorize(Roles = "Patient,Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -136,7 +136,7 @@ namespace MRITrack.Controllers
         // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Patient,Admin")]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(int id)
         {
             Comments comments = db.Comments.Find(id);
