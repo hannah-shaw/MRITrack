@@ -1,0 +1,71 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #map {
+            position: absolute;
+            top: 130px;
+            bottom: 60px;
+            width: 60%;
+        }
+
+        #title {
+            font-size: 36px;
+            margin-top: 20px;
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<main>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css" type="text/css">
+    <h1 id="title">@ViewBag.Title</h1>
+    <div id="map"></div>
+
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGFueGlhbzExMDciLCJhIjoiY2xram8ycXZmMHA2bjNkbWp5dzUyenI3YSJ9.kReTMu9bL2zJk_lTtiFDdg';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [120.58319, 31.29834],
+            zoom: 13
+        });
+
+        map.addControl(
+            new MapboxDirections({
+                accessToken: mapboxgl.accessToken
+            }),
+            'top-left'
+        );
+        // Create a default Marker and add it to the map.
+        const marker1 = new mapboxgl.Marker()
+            .setLngLat([120.74250, 31.27052])
+            .addTo(map);
+
+        // Create a default Marker, colored black, rotated 45 degrees.
+        const marker2 = new mapboxgl.Marker({ color: 'black', rotation: 45 })
+            .setLngLat([145.13608, -37.91112])
+            .addTo(map);
+        // Get the user's current position and set the map's center to that location
+        navigator.geolocation.getCurrentPosition(position => {
+            const { latitude, longitude } = position.coords;
+            map.setCenter([longitude, latitude]);
+        }, error => {
+            console.error(error);
+        });
+    </script>
+</main>
